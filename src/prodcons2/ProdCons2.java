@@ -13,6 +13,7 @@ public class ProdCons2 {
 
     public static void main(String args[])
     {
+
         int numberOfConsumers = 0;
         Queue<Integer> sharedQueue = new LinkedList<Integer>();
         if (args.length > 0) {
