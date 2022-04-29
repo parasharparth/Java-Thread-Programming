@@ -8,14 +8,13 @@ import java.util.Queue;
 public class ProdCons2 {
     public static int BUFFSIZE = 20;
     public static int NUMITEMS = 100;
-    public static HashMap<Integer,String> result= new HashMap<Integer,String>();
-    public static int printresult = 0;
+    public static HashMap<Integer,String> result= new HashMap<>();
 
-    public static void main(String args[])
+    public static void main(String[] args)
     {
 
         int numberOfConsumers = 0;
-        Queue<Integer> sharedQueue = new LinkedList<Integer>();
+        Queue<Integer> sharedQueue = new LinkedList<>();
         if (args.length > 0) {
             numberOfConsumers = Integer.parseInt(args[0]);
 
@@ -24,7 +23,7 @@ public class ProdCons2 {
             prodThread.start();
             for(int i=0;i<numberOfConsumers; i++)
             {
-                consThreads[i] = new Thread(new Consumer(sharedQueue, BUFFSIZE, NUMITEMS,i,result), "Consumer");
+                consThreads[i] = new Thread(new Consumer(sharedQueue, i,result), "Consumer");
                 consThreads[i].start();
                 System.out.println("The consumer thread started is:- "+i);
             }
@@ -50,7 +49,7 @@ public class ProdCons2 {
         else
         {
             Thread prodThread = new Thread(new Producer(sharedQueue, BUFFSIZE,NUMITEMS,numberOfConsumers), "Producer");
-            Thread consThread = new Thread(new Consumer(sharedQueue, BUFFSIZE, NUMITEMS,0,result), "Consumer");
+            Thread consThread = new Thread(new Consumer(sharedQueue, 0,result), "Consumer");
             prodThread.start();
             consThread.start();
             try {
@@ -144,22 +143,17 @@ class Producer implements Runnable {
 class Consumer implements Runnable {
 
     private final Queue<Integer> sharedQueue;
-    @SuppressWarnings("unused")
-    private final int SIZE;
-    private final int NUMITEMS;
     private final int CONSUMER_NUMBER;
     private final HashMap<Integer,String> RESULT;
-    public Consumer(Queue<Integer> sharedQueue, int size, int numitems,int consumer_number,HashMap<Integer,String> result) {
+    public Consumer(Queue<Integer> sharedQueue, int consumer_number, HashMap<Integer, String> result) {
         this.sharedQueue = sharedQueue;
-        this.SIZE = size;
-        this.NUMITEMS = numitems;
         this.CONSUMER_NUMBER = consumer_number;
         this.RESULT =result;
     }
 
     @SuppressWarnings("deprecation")
     public void run() {
-        int returnValue = 0;
+        int returnValue;
         int count = 0;
         while (true) {
             try
@@ -167,20 +161,17 @@ class Consumer implements Runnable {
                 synchronized(sharedQueue)
                 {
                     returnValue = consume();
-                    System.out.println("Consumed item: " + returnValue + " consumed by:- "+CONSUMER_NUMBER);
-                    count = count+1;
+                    System.out.println("Consumed item: " + returnValue + " consumed by:- " + CONSUMER_NUMBER);
+                    count = count + 1;
 
-                    if(returnValue == (-1))
-                    {
+                    if (returnValue == (-1)) {
                         //System.out.println("Consumer number:- "+CONSUMER_NUMBER+ " ends as it encountered -1");
-                        String finalresult = "Number of Consumed items by Consumer Number "+CONSUMER_NUMBER+" are:- "+count;
+                        String finalresult = "Number of Consumed items by Consumer Number " + CONSUMER_NUMBER + " are:- " + count;
                         RESULT.put(CONSUMER_NUMBER, finalresult);
                         Thread.currentThread().stop();
                     }
                 }
-            }
-            catch (InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
@@ -200,7 +191,7 @@ class Consumer implements Runnable {
         synchronized (sharedQueue)
         {
             sharedQueue.notifyAll();
-            return (Integer) sharedQueue.remove().intValue();
+            return sharedQueue.remove();
         }
     }
 }
