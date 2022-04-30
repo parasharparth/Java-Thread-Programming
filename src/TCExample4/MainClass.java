@@ -17,6 +17,7 @@ public class MainClass {
         System.out.println("Enter the number of elements whose sum you want to calculate");
         Scanner sc = new Scanner(System.in);
         int numberOfElements = sc.nextInt();
+        System.out.println("Enter the number of threads you want to run");
         int numberOfThreads = sc.nextInt();
         sc.close();
 
@@ -26,22 +27,20 @@ public class MainClass {
         //Declaring the shared variable total
         AtomicLong total = new AtomicLong(0);
 
-        //Partitioning
-        int start = 0;
-        int end = 0;
-
         //Starting the threads
-        for(int i=1; i<=numberOfThreads; i++)
+        for(int i=0; i<numberOfThreads; i++)
         {
-            thread[i] = new Example4(total);
+            int low = (numberOfElements/numberOfThreads) * i;
+            int high = low + (numberOfElements/numberOfThreads);
+            thread[i] = new Example4(total,high,low);
             thread[i].start();
         }
 
         //joining the threads for inter thread communication
-        for(int i=1; i<=numberOfThreads; i++)
+        for(int i=0; i<numberOfThreads; i++)
         {
             thread[i].join();
         }
-
+        System.out.println("TOTAL:- "+total);
     }
 }
