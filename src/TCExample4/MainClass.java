@@ -41,6 +41,6 @@ public class MainClass {
         {
             thread[i].join();
         }
-        System.out.println("TOTAL:- "+total);
+        System.out.println("GRAND TOTAL:- "+total);
     }
 }
